@@ -12,11 +12,12 @@ from bs4 import BeautifulSoup
 from urlparse import urlparse, urljoin
 from urllib import urlretrieve
 from html2text import html2text_file
+import types
 
 '''
-exitwp - Wordpress xml exports to Jekykll blog format conversion
+wp2markdown-soube- Wordpress xml exports to soube blog format conversion
 
-Tested with Wordpress 3.3.1 and jekyll 0.11.2
+Tested with Wordpress 3.3.1
 
 '''
 ######################################################
@@ -120,7 +121,7 @@ def parse_wp_xml(file):
                     tag = q
                 try:
                     result = i.find(ns[namespace] + tag).text
-                    print result.encode('utf-8')
+                    #print result.encode('utf-8')
                 except AttributeError:
                     result = "No Content Found"
                 if unicode_wrap:
@@ -174,7 +175,7 @@ def write_jekyll(data, target_format):
     item_uids = {}
     attachments = {}
 
-    def get_blog_path(data, path_infix='jekyll'):
+    def get_blog_path(data, path_infix='soube'):
         name = data['header']['link']
         name = re.sub('^https?', '', name)
         name = re.sub('[^A-Za-z0-9_.-]', '', name)
@@ -281,19 +282,19 @@ def write_jekyll(data, target_format):
         out = None
         yaml_header = {
             'title': i['title'],
-            'author': i['author'],
+            #'author': i['author'],
             'date': datetime.strptime(
                 i['date'], '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC()),
-            'slug': i['slug'],
-            'wordpress_id': int(i['wp_id']),
-            'comments': i['comments'],
+            'id': int(i['wp_id']),
+            #'comments': i['comments'],
         }
+        print yaml_header.get('title'),yaml_header.get('date')
         if i['status'] != u'publish':
             yaml_header['published'] = False
 
         if i['type'] == 'post':
             i['uid'] = get_item_uid(i, date_prefix=True)
-            fn = get_item_path(i, dir='_posts')
+            fn = get_item_path(i, dir='posts')
             out = open_file(fn)
             yaml_header['layout'] = 'post'
         elif i['type'] == 'page':
@@ -328,8 +329,12 @@ def write_jekyll(data, target_format):
 
         if out is not None:
             def toyaml(data):
-                return yaml.safe_dump(data, allow_unicode=True,
-                                      default_flow_style=False).decode('utf-8')
+                #return yaml.safe_dump(data, allow_unicode=True,
+                #                      default_flow_style=False).decode('utf-8')
+                ret=[]
+                for k,v in data.items():
+                    ret.append('%s: %s\n'%(k,(",".join(v) if type(v) is types.ListType else v)))
+                return ''.join(ret)
 
             tax_out = {}
             for taxonomy in i['taxanomies']:
@@ -341,13 +346,12 @@ def write_jekyll(data, target_format):
                         continue
                     tax_out[t_name].append(tvalue)
 
-            out.write('---\n')
             if len(yaml_header) > 0:
                 out.write(toyaml(yaml_header))
             if len(tax_out) > 0:
                 out.write(toyaml(tax_out))
 
-            out.write('---\n\n')
+            out.write('\n')
             try:
                 out.write(html2fmt(i['body'], target_format))
             except:
@@ -361,4 +365,4 @@ for wpe in wp_exports:
     data = parse_wp_xml(wpe)
     write_jekyll(data, target_format)
 
-print 'done'
+print 'done, --> ./',build_dir 
