@@ -2,7 +2,7 @@
 wp2markdown-soube
 ######
 
-这是个基于Exitwp的工具，用来把wordpress的blog转为markdown格式，和Exitwp不同的是p这个工具生成的文章元数据格式更简洁。
+这是个基于Exitwp的工具，用来把wordpress的blog转为markdown格式，和Exitwp不同的是这个工具生成的文章元数据格式更简洁。
 
 Runtime dependencies
 ====================
@@ -42,19 +42,3 @@ In the event your local system is incompatible with the dependencies listed (or 
 7. You should now have all the blogs converted into separate directories under the ``build`` directory
 8. **Important:** Once satisfied with the results, run ``vagrant destroy -f`` to shut down the VM and remove the virtual drive from your local machine
 
-Configuration/Customization
-===========================
-
-See the `configuration file <https://github.com/thomasf/exitwp/blob/master/config.yaml>`_ for all configurable options.
-
-Some things like custom handling of non standard post types is not fully configurable through the config file. You might have to modify the `source code <https://github.com/thomasf/exitwp/blob/master/exitwp.py>`_ to add custom parsing behaviour.
-
-Known issues
-============
- * Target file names are some times less than optimal.
- * Rewriting of image/attachment links if they are downloaded would be a good feature
- * There will probably be issues when migrating non utf-8 encoded wordpress dump files (if they exist).
-
-Other Tools
-===========
- * A Gist to convert WP-Footnotes style footnotes to PHP Markdown Extra style footnotes: https://gist.github.com/1246047
