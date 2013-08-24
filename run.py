@@ -205,16 +205,8 @@ def write_jekyll(data, target_format):
             if (date_prefix):
                 dt = datetime.strptime(item['date'], date_fmt)
                 uid.append(dt.strftime('%Y-%m-%d'))
-                uid.append('-')
-            s_title = item['slug']
-            if s_title is None or s_title == '':
-                s_title = item['title']
-            if s_title is None or s_title == '':
-                s_title = 'untitled'
-            s_title = s_title.replace(' ', '_')
-            s_title = re.sub('[^a-zA-Z0-9_-]', '', s_title)
-            uid.append(s_title)
-            fn = ''.join(uid)
+            uid.append(item['wp_id'])
+            fn = '_'.join(uid)
             n = 1
             while fn in item_uids[namespace]:
                 n = n + 1
@@ -232,7 +224,8 @@ def write_jekyll(data, target_format):
                 os.makedirs(''.join(filename_parts))
             filename_parts.append('/index')
         filename_parts.append('.')
-        filename_parts.append(target_format)
+        filename_end={"markdown":"md"}
+        filename_parts.append(filename_end.get(target_format,'txt'))
         return ''.join(filename_parts)
 
     def get_attachment_path(src, dir, dir_prefix='images'):
