@@ -159,6 +159,7 @@ def parse_wp_xml(file):
                 'img_srcs': img_srcs
             }
 
+            #if gi('dc:creator')!='kurrunk':
             export_items.append(export_item)
 
         return export_items
@@ -277,7 +278,7 @@ def write_jekyll(data, target_format):
             'title': i['title'],
             #'author': i['author'],
             'date': datetime.strptime(
-                i['date'], '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC()),
+                i['date'], '%Y-%m-%d %H:%M:%S'),#.replace(tzinfo=UTC()),
             'id': int(i['wp_id']),
             #'comments': i['comments'],
         }
@@ -287,7 +288,7 @@ def write_jekyll(data, target_format):
 
         if i['type'] == 'post':
             i['uid'] = get_item_uid(i, date_prefix=True)
-            fn = get_item_path(i, dir='posts')
+            fn = get_item_path(i)
             out = open_file(fn)
             yaml_header['layout'] = 'post'
         elif i['type'] == 'page':
